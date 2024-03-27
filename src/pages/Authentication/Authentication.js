@@ -5,8 +5,13 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import AlertUi from "../../components/UI/AlertUi";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import TokenSlice, { TokenSliceActions } from "../../store/TokenSlice";
 
 const Authentication = () => {
+  const dispatch = useDispatch();
+  const tokenCheck = useSelector((state) => state.LogInStore.token);
+  const loginCheck = useSelector((state) => state.LogInStore.isLogged);
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [passError, setPassError] = useState(false);
@@ -48,7 +53,9 @@ const Authentication = () => {
           }
         );
         if (response.ok) {
+          const responseData = await response.json();
           navigate("/tracker");
+          dispatch(TokenSliceActions.LogIn(responseData.idToken));
         }
         if (!response.ok) {
           if (response.status === 400) {
