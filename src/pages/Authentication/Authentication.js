@@ -3,21 +3,102 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import AlertUi from "../../components/UI/AlertUi";
+import { useNavigate } from "react-router-dom";
 
 const Authentication = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
+  const [passError, setPassError] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [somethingWrong, setSomethingWrong] = useState(false);
+  const [emailExist, setEmailExist] = useState(false);
+  const [wrongPass, setWrongPass] = useState(false);
   const emailRef = useRef();
   const passRef = useRef();
   const confirmPassRef = useRef();
+
   const switchHandler = () => {
     setIsLogin((prevState) => !prevState);
+    setPassError(false);
+    setRegisterSuccess(false);
+    setSomethingWrong(false);
+    setEmailExist(false);
+    setWrongPass(false);
   };
-  const submitHandler = (event) => {
+
+  const submitHandler = async (event) => {
     event.preventDefault();
     if (isLogin) {
-      console.log("Logging in...");
+      const emailInput = emailRef.current.value;
+      const passInput = passRef.current.value;
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyB4HniVVMIPPpNCfzZQTxDnuxWvwij4e2Y",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: emailInput,
+              password: passInput,
+              returnSecureToken: true,
+            }),
+          }
+        );
+        if (response.ok) {
+          navigate("/tracker");
+        }
+        if (!response.ok) {
+          if (response.status === 400) {
+            setWrongPass(true);
+          } else {
+            setSomethingWrong(true);
+          }
+          return;
+        }
+      } catch (error) {
+        setSomethingWrong(true);
+      }
     } else {
-      console.log("Registering...");
+      const emailInput = emailRef.current.value;
+      const passInput = passRef.current.value;
+      const confirmPassInput = confirmPassRef.current.value;
+      if (passInput !== confirmPassInput) {
+        setPassError(true);
+        return;
+      }
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB4HniVVMIPPpNCfzZQTxDnuxWvwij4e2Y",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: emailInput,
+              password: passInput,
+              returnSecureToken: true,
+            }),
+          }
+        );
+        if (!response.ok) {
+          if (response.status === 400) {
+            setEmailExist(true);
+          } else {
+            setSomethingWrong(true);
+          }
+          return;
+        }
+        if (response.ok) {
+          setRegisterSuccess(true);
+          return;
+        }
+      } catch (error) {
+        setSomethingWrong(true);
+      }
     }
   };
 
@@ -51,7 +132,11 @@ const Authentication = () => {
                   label="Email address"
                   className="mb-3"
                 >
-                  <Form.Control type="email" placeholder="name@example.com" />
+                  <Form.Control
+                    type="email"
+                    placeholder="name@example.com"
+                    ref={emailRef}
+                  />
                 </FloatingLabel>
                 <Form.Text className="text-muted">
                   We'll never share your email with anyone else.
@@ -60,7 +145,11 @@ const Authentication = () => {
 
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <FloatingLabel controlId="floatingPassword" label="Password">
-                  <Form.Control type="password" placeholder="Password" />
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    ref={passRef}
+                  />
                 </FloatingLabel>
                 <Form.Text className="text-muted">
                   Never share your password with anyone
@@ -73,10 +162,59 @@ const Authentication = () => {
                     controlId="floatingPassword"
                     label="Confirm Password"
                   >
-                    <Form.Control type="password" placeholder="Password" />
+                    <Form.Control
+                      type="password"
+                      placeholder="Password"
+                      ref={confirmPassRef}
+                    />
                   </FloatingLabel>
                 </Form.Group>
               )}
+              {passError && (
+                <AlertUi
+                  variant={"danger"}
+                  heading={"Password Mismatch"}
+                  body={"The passwords you've entered do not match."}
+                />
+              )}
+              {registerSuccess && (
+                <AlertUi
+                  variant={"success"}
+                  heading={"Registration Successful"}
+                  body={
+                    "Welcome aboard! Your account has been successfully created."
+                  }
+                />
+              )}
+
+              {somethingWrong && (
+                <AlertUi
+                  variant={"danger"}
+                  heading={"Registration Failed"}
+                  body={
+                    "Oops! Something went wrong during registration. Please try again later."
+                  }
+                />
+              )}
+              {emailExist && (
+                <AlertUi
+                  variant={"danger"}
+                  heading={"Account Already Exists"}
+                  body={
+                    "Sorry, it seems like you've already registered. Please try again later or log in."
+                  }
+                />
+              )}
+              {wrongPass && (
+                <AlertUi
+                  variant={"danger"}
+                  heading={"Incorrect Password"}
+                  body={
+                    "Seems like you've entered the wrong password. Did you forget your password? You can reset it by clicking on 'Forgot Password'."
+                  }
+                />
+              )}
+
               <div
                 style={{
                   display: "flex",
@@ -95,7 +233,7 @@ const Authentication = () => {
                 </Button>
                 <Button
                   onClick={switchHandler}
-                  variant={!isLogin ? "outline-secondary" : "outline-secondary"}
+                  variant={isLogin ? "outline-secondary" : "outline-primary"}
                   style={{
                     width: "calc(50% - 5px)",
                     borderRadius: "8px",
