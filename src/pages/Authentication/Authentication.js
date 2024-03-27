@@ -55,6 +55,7 @@ const Authentication = () => {
         if (response.ok) {
           const responseData = await response.json();
           navigate("/tracker");
+          localStorage.setItem("token", responseData.idToken);
           dispatch(TokenSliceActions.LogIn(responseData.idToken));
         }
         if (!response.ok) {

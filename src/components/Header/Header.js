@@ -1,8 +1,9 @@
 import React from "react";
 import { Container, Nav, Navbar, Col, Row, Button } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
-
 const Header = () => {
+  const loginCheck = useSelector((state) => state.LogInStore.isLogged);
   return (
     <div>
       <Navbar bg="primary" variant="dark">
@@ -34,9 +35,16 @@ const Header = () => {
               <h4 className="mb-0">Profile</h4>
             </NavLink>
             <NavLink to="/auth" className="nav-link">
-              <Button variant="light" className="ml-2">
-                <h6 className="mb-0">Log In</h6>
-              </Button>
+              {!loginCheck && (
+                <Button variant="light" className="ml-2">
+                  <h6 className="mb-0">Log In</h6>
+                </Button>
+              )}
+              {loginCheck && (
+                <Button variant="light" className="ml-2">
+                  <h6 className="mb-0">Log Out</h6>
+                </Button>
+              )}
             </NavLink>
           </Nav>
         </Container>
