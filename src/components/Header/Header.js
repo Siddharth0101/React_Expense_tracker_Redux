@@ -1,9 +1,16 @@
 import React from "react";
 import { Container, Nav, Navbar, Col, Row, Button } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
+import { TokenSliceActions } from "../../store/TokenSlice";
 const Header = () => {
+  const dispatch = useDispatch();
+  const checkLogin = useSelector((state) => state.LogInStore.isLogged);
   const loginCheck = useSelector((state) => state.LogInStore.isLogged);
+  const logOutHandler = () => {
+    dispatch(TokenSliceActions.LogOut());
+    localStorage.removeItem("token");
+  };
   return (
     <div>
       <Navbar bg="primary" variant="dark">
@@ -28,12 +35,16 @@ const Header = () => {
             <NavLink to="/home" className="nav-link">
               <h4 className="mb-0">Home</h4>
             </NavLink>
-            <NavLink to="/tracker" className="nav-link">
-              <h4 className="mb-0">Tracker</h4>
-            </NavLink>
-            <NavLink to="/profile" className="nav-link">
-              <h4 className="mb-0">Profile</h4>
-            </NavLink>
+            {checkLogin && (
+              <NavLink to="/tracker" className="nav-link">
+                <h4 className="mb-0">Tracker</h4>
+              </NavLink>
+            )}
+            {checkLogin && (
+              <NavLink to="/profile" className="nav-link">
+                <h4 className="mb-0">Profile</h4>
+              </NavLink>
+            )}
             <NavLink to="/auth" className="nav-link">
               {!loginCheck && (
                 <Button variant="light" className="ml-2">
@@ -41,7 +52,11 @@ const Header = () => {
                 </Button>
               )}
               {loginCheck && (
-                <Button variant="light" className="ml-2">
+                <Button
+                  variant="danger"
+                  className="ml-2"
+                  onClick={logOutHandler}
+                >
                   <h6 className="mb-0">Log Out</h6>
                 </Button>
               )}

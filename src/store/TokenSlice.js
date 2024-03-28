@@ -6,8 +6,12 @@ const TokenSlice = createSlice({
     token: localStorage.getItem("token") || "",
     isLogged: localStorage.getItem("token") ? true : false,
     id: "",
+    items: [],
   },
   reducers: {
+    DisplayData(state, action) {
+      state.items = action.payload;
+    },
     LogIn(state, action) {
       state.token = action.payload;
       state.isLogged = true;
