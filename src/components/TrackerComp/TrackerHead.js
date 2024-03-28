@@ -6,10 +6,9 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { TokenSliceActions } from "../../store/TokenSlice";
+import { DisplaySliceActions } from "../../store/DisplaySlice";
 
 const TrackerHead = (props) => {
-  const [formExpenseData, setFormExpenseData] = useState([]);
   const itemRef = useRef();
   const moneyRef = useRef();
   const descriptionRef = useRef();
@@ -27,9 +26,8 @@ const TrackerHead = (props) => {
       price: moneyInput,
       description: descriptionInput,
     };
-    setFormExpenseData((prevExpenseData) => [...prevExpenseData, newExpense]);
+    dispatch(DisplaySliceActions.DisplayItems(newExpense));
   };
-  dispatch(TokenSliceActions.DisplayData(formExpenseData));
   return (
     <div
       style={{

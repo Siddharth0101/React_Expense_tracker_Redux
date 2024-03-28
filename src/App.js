@@ -12,8 +12,7 @@ import { SendRequest } from "./store/DataRequest";
 
 function App() {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.LogInStore.items);
-  const checkLogin = useSelector((state) => state.LogInStore.isLogged);
+  const items = useSelector((state) => state.Display.items);
   const router = createBrowserRouter([
     {
       path: "/",
