@@ -4,13 +4,19 @@ const DisplaySlice = createSlice({
   name: "Display",
   initialState: {
     items: [],
+    changed: false,
   },
   reducers: {
+    ReplaceItems(state, action) {
+      state.items = action.payload;
+    },
     DisplayItems(state, action) {
       state.items = state.items.concat(action.payload);
+      state.changed = true;
     },
     DeleteItem(state, action) {
       state.items = state.items.filter((item) => item.id !== action.payload);
+      state.changed = true;
     },
     UpdateItem(state, action) {
       const { id, updatedItem } = action.payload;

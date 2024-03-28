@@ -90,6 +90,7 @@ const TrackerBody = (props) => {
                         <Button
                           variant="outline-warning"
                           size="sm"
+                          style={{ width: "45%" }}
                           onClick={() => handleEdit(item)}
                         >
                           Edit
@@ -97,6 +98,7 @@ const TrackerBody = (props) => {
                         <Button
                           variant="outline-danger"
                           size="sm"
+                          style={{ width: "50%" }}
                           onClick={() => handleDelete(item.id)}
                         >
                           Delete

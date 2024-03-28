@@ -8,9 +8,10 @@ import Profile from "./pages/Profile/Profile";
 import Home from "./pages/Home/Home";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { SendRequest } from "./store/DataRequest";
-
+import { fetchData, sendRequest } from "./store/DataRequest";
+let isInitial = true;
 function App() {
+  const checkChanged = useSelector((state) => state.Display.changed);
   const dispatch = useDispatch();
   const items = useSelector((state) => state.Display.items);
   const router = createBrowserRouter([
@@ -38,8 +39,18 @@ function App() {
     },
   ]);
   useEffect(() => {
-    dispatch(SendRequest(items));
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+    if (checkChanged) {
+      dispatch(sendRequest(items));
+    }
   }, [items, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
   return (
     <div>
       <RouterProvider router={router} />
