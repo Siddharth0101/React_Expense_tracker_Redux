@@ -5,10 +5,12 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { DisplaySliceActions } from "../../store/DisplaySlice";
-
+import Alert from "react-bootstrap/Alert";
 const TrackerBody = (props) => {
   const dispatch = useDispatch();
   const displayData = useSelector((state) => state.Display.items);
+  console.log(displayData);
+  const total = displayData.reduce((a, b) => a + parseInt(b.price), 0);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedItem, setEditedItem] = useState(null);
   const [editedData, setEditedData] = useState({
@@ -109,9 +111,36 @@ const TrackerBody = (props) => {
                 ))}
               </tbody>
             </Table>
+            <div>
+              <h4>Total Amount-${total}</h4>
+            </div>
           </Card.Text>
+          {total > 1000 ? (
+            <Button variant="dark">Eligible For Premium</Button>
+          ) : (
+            ""
+          )}
         </Card.Body>
       </Card>
+      {total > 1000 ? (
+        <div>
+          <Alert
+            variant="success"
+            style={{
+              position: "absolute",
+              bottom: "0.1px",
+              left: "40px",
+              maxWidth: "600px",
+            }}
+            dismissible
+          >
+            <Alert.Heading>Eligible for Premium</Alert.Heading>
+            <p>Congrats! Now Your Eligible for Premium</p>
+          </Alert>
+        </div>
+      ) : (
+        ""
+      )}
       <Modal show={showEditModal} onHide={handleCloseEditModal}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Item</Modal.Title>

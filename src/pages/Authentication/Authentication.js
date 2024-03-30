@@ -10,8 +10,6 @@ import TokenSlice, { TokenSliceActions } from "../../store/TokenSlice";
 
 const Authentication = () => {
   const dispatch = useDispatch();
-  const tokenCheck = useSelector((state) => state.LogInStore.token);
-  const loginCheck = useSelector((state) => state.LogInStore.isLogged);
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [passError, setPassError] = useState(false);

@@ -4,6 +4,7 @@ const DisplaySlice = createSlice({
   name: "Display",
   initialState: {
     items: [],
+    TotalAmount: 0,
     changed: false,
   },
   reducers: {

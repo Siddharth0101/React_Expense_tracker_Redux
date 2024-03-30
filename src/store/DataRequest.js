@@ -39,7 +39,6 @@ export const fetchData = () => {
     };
     try {
       const Data = await getData();
-      console.log(Data);
       dispatch(DisplaySliceActions.ReplaceItems(Data || []));
     } catch (error) {}
   };
